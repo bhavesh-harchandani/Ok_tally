@@ -101,19 +101,42 @@ class _HomeScreenState extends State<HomeScreen> {
           List<dynamic> filteredKeys = [];
           for (var key in sortedKeys) {
             var cust = b.get(key);
-            if (cust['name'].toString().toLowerCase().contains(_searchQuery)) {
+            // ✅ FIX 1: Agar search query khali ho ya naam match kare, dono time par saare data show honge
+            if (_searchQuery.isEmpty || cust['name'].toString().toLowerCase().contains(_searchQuery.toLowerCase())) {
               filteredKeys.add(key);
             }
           }
 
           return Column(
             children: [
+              // ✅ FIX 2: Expanded aur safe fontSize lagaya hai taaki bade amounts par yellow strip error na aaye
               Container(
-                width: double.infinity, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), color: Colors.indigo.shade50,
-                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  const Text("Total Balance:", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-                  Text(indianFormat.format(netBalance.abs()), style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: netBalance >= 0 ? Colors.green : Colors.red)),
-                ]),
+                width: double.infinity, 
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), 
+                color: Colors.indigo.shade50,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+                  children: [
+                    const Text(
+                      "Total Balance:", 
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        indianFormat.format(netBalance.abs()), 
+                        textAlign: TextAlign.end,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: 28, 
+                          fontWeight: FontWeight.bold, 
+                          color: netBalance >= 0 ? Colors.green : Colors.red
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const Divider(height: 1),
               Expanded(
